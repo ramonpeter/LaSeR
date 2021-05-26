@@ -2,7 +2,7 @@
 Latent Space Refinement 
 ========================
 
-This repo contains the code for the **L**\ atente **S**\ pace **R**\ efinement (LaSeR) protocol to improve
+This repo contains the code for the **La**\ tent **S**\ pac\ **e**\  **R**\ efinement (LaSeR) protocol to improve
 any generative model by modifying the latent space distribution. Using the DCTR and DDLS idea, we can
 derive latent space weights and thus define an optimized latent space distribution.
 In order to sample from this distribution we sugggest the following methods
