@@ -8,12 +8,8 @@ derive latent space weights and thus define an optimized latent space distributi
 In order to sample from this distribution we sugggest the following methods
 
 1. Hamilton MCMC: This is a more advanced MCMC method (compared to pure langevin dynamics) and guarantees sampling from the correct prior while keeping the autocorrelation small.
-2. Weighted Flow: We train a Flow on the weighted latent space to produce the corresponding unweighted but deformed latent space distribution.
-3. Weighted GAN: The same can in principle also be done using a GAN. We will however show that in most cases, Flow networks will perform better.
-
-Moreover, we will give the necessary mathematical requirements in order to make this refinement work.
-This will also explain why Flow networks fail in many situations and why GANs do better in reproducing
-complex topologies.
+2. Weighted GAN: We train a Flow on the weighted latent space to produce the corresponding unweighted but deformed latent space distribution.
+2. Weighted Flow: In principle the refinement network could also be a Flow but this will not fix any topological issues.
 
 Background
 ~~~~~~~~~~~
