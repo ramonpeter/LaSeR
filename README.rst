@@ -9,7 +9,7 @@ In order to sample from this distribution we sugggest the following methods
 
 1. Hamilton MCMC: This is a more advanced MCMC method (compared to pure langevin dynamics) and guarantees sampling from the correct prior while keeping the autocorrelation small.
 2. Weighted GAN: We train a Flow on the weighted latent space to produce the corresponding unweighted but deformed latent space distribution.
-2. Weighted Flow: In principle the refinement network could also be a Flow but this will not fix any topological issues.
+3. Weighted Flow: In principle the refinement network could also be a Flow but this will not fix any topological issues.
 
 Background
 ~~~~~~~~~~~
