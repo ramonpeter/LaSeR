@@ -1,2 +1,0 @@
-# LaSeR
-Latent Space Refinement
