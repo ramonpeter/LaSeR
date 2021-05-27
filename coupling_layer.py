@@ -4,8 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Block(nn.Module):
-    ''' This elegant coupling block was invented by jakob '''
-
     def __init__(self, dims_in, dims_c=[],
                  subnet_constructor=None,
                  clamp=2.,
