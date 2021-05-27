@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn.utils import spectral_norm
 import numpy as np
 
-import config as c
+import config_gan as c
 
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 
@@ -46,9 +46,7 @@ class netG(nn.Module):
 		return x
 
 	def set_optimizer(self):
-		"""
-		Set optimizer for training
-		"""
+		'''Set optimizer for training'''
 		self.optim = torch.optim.Adam(
 			self.params_trainable,
 			lr=c.lr,
@@ -82,7 +80,7 @@ class netD(nn.Module):
 		self.params_trainable = list(filter(lambda p: p.requires_grad, self.parameters()))
 
 	def define_model_architecture(self):
-
+		'''define model with spectral normalization regulariazation'''
 		model = nn.ModuleList()
 
 		model.append(spectral_norm(nn.Linear(self.in_dim, self.internal_size), n_power_iterations=2))
@@ -100,7 +98,6 @@ class netD(nn.Module):
 		self.params_trainable = list(filter(lambda p: p.requires_grad, self.model.parameters()))
 
 	def define_model_architecture_unreg(self):
-
 		model = nn.ModuleList()
 
 		model.append(nn.Linear(self.in_dim, self.internal_size))
@@ -123,9 +120,7 @@ class netD(nn.Module):
 		return x
 
 	def set_optimizer(self):
-		"""
-		Set optimizer for training
-		"""
+		'''Set optimizer for training'''
 		self.optim = torch.optim.Adam(
 			self.params_trainable,
 			lr=c.lr,

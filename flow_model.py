@@ -2,7 +2,7 @@ from FrEIA.framework import *
 from FrEIA.modules import *
 
 from coupling_layer import Block
-import config_FLOW as c
+import config_flow as c
 
 device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 

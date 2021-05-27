@@ -16,7 +16,7 @@ def read_files(DATAPATH, dataset, verbose=True):
 
 	return events
 
-def Loader(dataset, batch_size, test, scaler, on_shell, mom_cons, weighted):
+def Loader(dataset, batch_size, test, scaler, weighted):
 
 	datapath = './data/'
 	data = read_files(datapath, dataset)	
@@ -24,7 +24,7 @@ def Loader(dataset, batch_size, test, scaler, on_shell, mom_cons, weighted):
 	if test == True:
 		split = int(len(data) * 0.01)
 	else:	
-		split = int(len(data) * 0.01)
+		split = int(len(data) * 0.9)
 
 	validate_split = int(len(data) * 0.95)
 

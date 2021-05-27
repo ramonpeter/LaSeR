@@ -1,5 +1,5 @@
 import argparse
-import config_GAN as c
+import config_flow as c
 
 def parse(args):
 

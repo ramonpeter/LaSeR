@@ -7,7 +7,7 @@ from flow_model import INN
 
 import sys, os
 
-import config_FLOW as c
+import config_flow as c
 import opts
 opts.parse(sys.argv)
 config_str = ""
@@ -25,7 +25,7 @@ print(config_str)
 
 device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 
-train_loader, validate_loader, dataset_size, data_shape, scales = Loader(c.dataset, c.batch_size, c.test, c.scaler, c.on_shell, c.mom_cons, c.weighted)
+train_loader, validate_loader, dataset_size, data_shape, scales = Loader(c.dataset, c.batch_size, c.test, c.scaler, c.weighted)
 
 if c.weighted:
 	data_shape -= 1
@@ -46,10 +46,6 @@ try:
 		os.makedirs(log_dir + '/' +  c.dataset + '/' + '/n_epochs_' + str(c.n_epochs))
 
 	F_loss_meter = AverageMeter()
-
-	if c.load_model:
-		checkpoint_path_F = log_dir + '/' + c.dataset + '/n_epochs_200/' + '/checkpoint_F_epoch_100.pth'
-		Flow, Flow.optim, init_epoch = load_checkpoint(checkpoint_path_F, Flow, Flow.optim)
 
 	for epoch in range(c.n_epochs):
 		for iteration in range(c.n_its_per_epoch):
@@ -85,11 +81,11 @@ try:
 
 			if epoch == 0 or epoch % c.show_interval == 0:
 				print_log(epoch, c.n_epochs, i + 1, len(train_loader), Flow.scheduler.optimizer.param_groups[0]['lr'],
-							   c.show_interval, F_loss_meter, F_loss_meter)
+							   c.show_interval, F_loss_meter, F_loss_meter, Flow=True)
 
 			elif (epoch + 1) == len(train_loader):
 				print_log(epoch, c.n_epochs, i + 1, len(train_loader), Flow.scheduler.optimizer.param_groups[0]['lr'],
-							   (i + 1) % c.show_interval, F_loss_meter, F_loss_meter)
+							   (i + 1) % c.show_interval, F_loss_meter, F_loss_meter, Flow=True)
 
 			F_loss_meter.reset()
 

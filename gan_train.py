@@ -8,7 +8,7 @@ from gan_models import *
 
 import sys, os
 
-import config as c
+import config_gan as c
 import opts
 opts.parse(sys.argv)
 config_str = ""
@@ -26,10 +26,10 @@ print(config_str)
 
 device = torch.device("cuda:0" if (torch.cuda.is_available()) else "cpu")
 
-train_loader, validate_loader, dataset_size, data_shape, scales = Loader(c.dataset, c.batch_size, c.test, c.scaler, c.on_shell, c.mom_cons, c.weighted)
+train_loader, validate_loader, dataset_size, data_shape, scales = Loader(c.dataset, c.batch_size, c.test, c.scaler, c.weighted)
 
-#if c.weighted:
-#	data_shape -= 1
+if c.weighted:
+	data_shape -= 1
 
 G = netG(in_dim=data_shape, num_layers=c.n_layers, internal_size=c.n_units)
 G.define_model_architecture()
@@ -37,14 +37,10 @@ G.set_optimizer()
 
 D = netD(in_dim=data_shape, num_layers=c.n_layers, internal_size=c.n_units)
 D.define_model_architecture_unreg()
-#D.define_model_architecture()
 D.set_optimizer()
 
 data_shape *= c.latent_dim_gen
 
-#print("\n" + "==="*30 + "\n")
-#print(Flow.model)
-#print('Total parameters: %d' % sum([np.prod(p.size()) for p in Flow.params_trainable]))
 print("\n" + "==="*30 + "\n")
 print(G)
 print('Total parameters: %d' % sum([np.prod(p.size()) for p in G.params_trainable]))
@@ -67,16 +63,9 @@ try:
 	# setup some varibles
 	G_loss_meter = AverageMeter()
 	D_loss_meter = AverageMeter()
-	#Val_loss_meter  = AverageMeter()
 
 	G_loss_list = []
 	D_loss_list = []
-
-	if c.load_model:
-		checkpoint_path_G = log_dir + '/n_epochs_200/' + '/checkpoint_G_epoch_050.pth'
-		checkpoint_path_D = log_dir + '/n_epochs_200/' + '/checkpoint_D_epoch_050.pth'
-		G, G.optim, init_epoch = load_checkpoint(checkpoint_path_G, G, G.optim)
-		D, D.optim, init_epoch = load_checkpoint(checkpoint_path_D, D, D.optim)
 
 	for epoch in range(c.n_epochs):
 		for iteration in range(c.n_its_per_epoch):
@@ -98,20 +87,14 @@ try:
 				D.optim.zero_grad()
 
 				if c.train:
+					'''Train discriminator'''
 					for nd in range(c.n_disc_updates):
-						"""Train discriminator"""
 						label_real = torch.ones(c.batch_size).double().to(device)
 						label_fake = torch.zeros(c.batch_size).double().to(device)
-						#label_real = torch.ones(int(c.batch_size/c.inv_dim)).double().to(device)
-						#label_fake = torch.zeros(int(c.batch_size/c.inv_dim)).double().to(device)
 					
 						d_result_real = D(events).view(-1)
 
 						if c.weighted:
-
-							#weights = weights.view(int(c.batch_size/c.inv_dim), c.inv_dim)
-							#weights = torch.sum(weights,1)
-		
 							criterion = nn.BCEWithLogitsLoss(weight=weights.view(-1),reduction='sum')
 							d_loss_real_ = criterion(d_result_real, label_real) / torch.sum(weights)
 
@@ -130,8 +113,7 @@ try:
 						d_loss.backward()
 						D.optim.step()
 
-					"""Train generator"""
-	
+					'''Train generator'''
 					noise = torch.randn(c.batch_size, data_shape).double().to(device)
 					fake = G(noise)
 					d_result_fake = D(fake).view(-1)
@@ -146,39 +128,14 @@ try:
 
 			if epoch == 0 or epoch % c.show_interval == 0:
 				print_log(epoch, c.n_epochs, i + 1, len(train_loader), D.scheduler.optimizer.param_groups[0]['lr'],
-							   c.show_interval, D_loss_meter, G_loss_meter)
+							   c.show_interval, D_loss_meter, G_loss_meter, Flow=False)
 
 			elif (epoch + 1) == len(train_loader):
 				print_log(epoch, c.n_epochs, i + 1, len(train_loader), D.scheduler.optimizer.param_groups[0]['lr'],
-							   (i + 1) % c.show_interval, D_loss_meter, G_loss_meter)
+							   (i + 1) % c.show_interval, D_loss_meter, G_loss_meter, Flow=False)
 
 			G_loss_meter.reset()
 			D_loss_meter.reset()
-
-			"""Validation"""
-			"""
-			if epoch == 0 or epoch % c.show_interval == 0:
-				for events in validate_loader:
-
-					Flow.model.eval()
-					if c.adversarial:
-						D.eval()
-						#Dlat.eval()
-
-					events /= scales
-				
-					gauss_output = Flow.model(events.double())
-					loss = torch.mean(gauss_output**2/2) - torch.mean(Flow.model.log_jacobian(run_forward=False)) / gauss_output.shape[1]
-	
-					#Val_loss_meter.update(loss.item())
-					j += 1
-
-				print('VALIDATION')
-				print_log(epoch, c.n_epochs, j + 1, len(validate_loader), Flow.scheduler.optimizer.param_groups[0]['lr'],
-							   (i + 1) % c.show_interval, D_loss_meter)
-
-			#Val_loss_meter.reset()
-			"""
 
 		if epoch % c.save_interval == 0 or epoch + 1 == c.n_epochs:
 			if c.save_model == True:
@@ -198,9 +155,9 @@ try:
 				save_checkpoint(checkpoint_D, log_dir + '/' + c.dataset + '/' + '/n_epochs_' + str(c.n_epochs), 'checkpoint_D_epoch_%03d' % (epoch))
 
 			if c.test == True:
-				size = 50000
+				size = 1000
 			else:
-				size = 300000
+				size = 100000
 
 			with torch.no_grad():
 				real = get_real_data(c.dataset, c.test, size)
@@ -222,14 +179,3 @@ except:
 	if c.checkpoint_on_error:
 		model.save(c.filename + '_ABORT')
 	raise 
-
-#if __name__ == '__main__':
-#	os.system('mkdir -p logs')
-
-	#c = parse()
-	#print(c)
-
-#	if c.train:
-#		train_net(c)
-#	else:
-#		predict(c)

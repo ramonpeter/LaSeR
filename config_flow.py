@@ -2,15 +2,13 @@
 # Choose dataset: #
 ######################
 
-dataset = '2d_eight'
+dataset = 'eight'
 
 #########
 # Data: #
 #########
 
 weighted = False
-on_shell = 0
-mom_cons = 0
 scaler   = 1.
 
 ##############
@@ -29,8 +27,6 @@ do_fwd = True
 n_epochs = 200
 n_its_per_epoch = 1
 
-mmd = False
-
 #################
 # Architecture: #
 #################
@@ -42,9 +38,6 @@ n_layers = 3
 ####################
 # Logging/preview: #
 ####################
-
-loss_names = ['L', 'L_rev']
-progress_bar = True
 
 show_interval = 10
 save_interval = 10

@@ -11,7 +11,7 @@ from inn_model import INN
 
 import sys, os
 
-import config_FLOW as c
+import config_flow as c
 import opts
 opts.parse(sys.argv)
 config_str = ""
