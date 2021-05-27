@@ -168,8 +168,7 @@ try:
 				else:
 					generated = G(noise).detach().numpy() * scales
 
-			#distributions = Distribution(real, generated, 'epoch_%03d' % (epoch) + '_target', log_dir + '/' + c.dataset + '/n_epochs_' + str(c.n_epochs), c.dataset)
-			distributions = Distribution(real, generated, 'epoch_%03d' % (epoch) + '_target', log_dir + '/' + c.dataset + '/n_epochs_' + str(c.n_epochs), c.dataset, weights = real[:,-1], latent=True)
+			distributions = Distribution(real, generated, 'epoch_%03d' % (epoch) + '_target', log_dir + '/' + c.dataset + '/n_epochs_' + str(c.n_epochs), c.dataset, latent=False)
 			distributions.plot()
 
 		G.scheduler.step()

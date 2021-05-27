@@ -21,9 +21,6 @@ gamma = 0.995
 weight_decay = 1e-5
 betas = (0.9, 0.999)
 
-do_rev = False
-do_fwd = True
-
 n_epochs = 200
 n_its_per_epoch = 1
 
