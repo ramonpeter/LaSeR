@@ -11,8 +11,8 @@ In order to sample from this distribution we sugggest the following methods
 2. Weighted GAN: We train a GAN on the weighted latent space to produce the corresponding unweighted but deformed latent space distribution.
 3. Weighted Flow: In principle the refinement network could also be a Flow but this will not fix any topological issues.
 
-Background
-~~~~~~~~~~~
+Related Work
+~~~~~~~~~~~~~
 
 Deep neural networks can be used to reweight high-dimensional phase spaces by repurposing classifiers as reweighting functions. 
 This was demonstrated in:
