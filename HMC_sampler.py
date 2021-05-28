@@ -109,7 +109,7 @@ class HamiltonMCMC():
 		p = p_init.detach()
 
 		# Make half a step for momentum at the beginning
-		p -= self.eps * self.grad_U(q) / 2
+		p = p - self.eps * self.grad_U(q) / 2
 
 		q=q.detach()
 		q_init=q_init.detach()
@@ -121,12 +121,12 @@ class HamiltonMCMC():
 				q = q + self.eps * p
 			# make full step momentum, except at end of trajectory
 			if i != self.L -1:
-				p -= self.eps * self.grad_U(q)
+				p = p - self.eps * self.grad_U(q)
 
 		# Make half step for momentum at the end
-		p -= self.eps * self.grad_U(q) / 2
+		p = p - self.eps * self.grad_U(q) / 2
 		# Negate momentum at and of trajectory to make proposal symmetric
-		p *= -1
+		p = p * -1
 
 		q=q.detach()
 		
@@ -140,7 +140,7 @@ class HamiltonMCMC():
 		u = torch.rand(self.n_chains,1).to(device)
 		mask = (u < torch.exp(U_init - U_proposed + K_init - K_proposed)).flatten()
 
-		q_init[mask] = q[mask]
+		q[~mask] = q_init[~mask]
 
 		return q, torch.sum(mask).detach().numpy()
 
